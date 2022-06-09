@@ -1,7 +1,7 @@
 <script type="module" src="https://unpkg.com/@google/model-viewer"></script>
 <script src="https://unpkg.com/focus-visible/dist/focus-visible.js" defer></script>
 
-<model-viewer id="color" src="./models/Range Rover.glb" poster="./pngs/Range Rover.png" shadow-intensity="10" ar ar-modes="webxr scene-viewer quick-look" ar camera-orbit="33deg 67deg auto" camera-controls alt="A 3D model of a Range Rover">
+<model-viewer id="color" src="./models/Range Rover.glb" interaction-prompt="none" oncontextmenu="return false;" skybox-image="./spruit_sunrise_1k_HDR.hdr" poster="./pngs/Range Rover.png" shadow-intensity="10" ar ar-modes="webxr scene-viewer quick-look" ar camera-orbit="33deg 67deg auto" camera-controls alt="A 3D model of a Range Rover">
 </model-viewer>
     <button slot="ar-button" class="ar-button">View in your space</button>
     <div id="ar-prompt">
@@ -51,7 +51,23 @@
         <button data-color="1,0,0,1">Red</button>
         <button data-color="0,1,0,1">Green</button>
         <button data-color="0,0,1,1">Blue</button>
+        <button data-color="1,1,0,1">Yellow</button>
+        <button data-color="1,0,1,1">Pink</button>
+        <button data-color="0,1,1,1">Aqua</button>
+        <button data-color="1,1,1,1">White</button>
+        <button data-color="0,0,0,1">Black</button>
     </div>
+
+    <div class="controls">
+        <div>
+          <p>Metalness: <span id="metalness-value"></span></p>
+          <input id="metalness" type="range" min="0" max="1" step="0.01" value="1">
+        </div>
+        <div>
+          <p>Roughness: <span id="roughness-value"></span></p>
+          <input id="roughness" type="range" min="0" max="1" step="0.01" value="0">
+        </div>
+      </div>
 </model-viewer>
 
 <script type="module">
@@ -68,7 +84,9 @@
     document.querySelector("#controls").addEventListener('beforexrselect', (ev) => {
         ev.preventDefault();
     });
-    })
+
+
+
     
     const modelViewer = document.querySelector("model-viewer");
   
@@ -86,6 +104,81 @@
       ev.preventDefault();
     });
 
+  
+    let lastX;
+    let panning = false;
+    let skyboxAngle = 0;
+    let radiansPerPixel;
+      
+    const startPan = () => {
+        const orbit = modelViewer.getCameraOrbit();
+        const { radius } = orbit;
+        radiansPerPixel = -1 * radius / modelViewer.getBoundingClientRect().height;
+        modelViewer.interactionPrompt = 'none';
+    };
+  
+    const updatePan = (thisX) => {      
+        const delta = (thisX - lastX) * radiansPerPixel;
+        lastX = thisX;
+        skyboxAngle += delta;
+        const orbit = modelViewer.getCameraOrbit();
+        orbit.theta += delta;
+        modelViewer.cameraOrbit = orbit.toString();
+        modelViewer.resetTurntableRotation(skyboxAngle);
+        modelViewer.jumpCameraToGoal();
+    }
+  
+    modelViewer.addEventListener('mousedown', (event) => {
+        panning = event.button === 2 || event.ctrlKey || event.metaKey || event.shiftKey;
+        if (!panning)
+        return;
+
+        lastX = event.clientX;
+        startPan();
+        event.stopPropagation();
+    }, true);
+
+    modelViewer.addEventListener('touchstart', (event) => {
+        const {targetTouches, touches} = event;
+        panning = targetTouches.length === 2 && targetTouches.length === touches.length;
+        if (!panning)
+        return;
+
+            lastX = 0.5 * (targetTouches[0].clientX + targetTouches[1].clientX);
+    startPan();
+    }, true);
+
+    self.addEventListener('mousemove', (event) => {
+        if (!panning)
+        return;
+
+        updatePan(event.clientX);
+        event.stopPropagation();
+    }, true);
+
+    modelViewer.addEventListener('touchmove', (event) => {
+        if (!panning || event.targetTouches.length !== 2)
+        return;
+
+        const {targetTouches} = event;
+        const thisX = 0.5 * (targetTouches[0].clientX + targetTouches[1].clientX);
+        updatePan(thisX);
+    }, true);
+
+    self.addEventListener('mouseup', (event) => {
+        panning = false;
+    }, true);
+  
+    modelViewer.addEventListener('touchend', (event) => {
+        panning = false;
+    }, true);
+    })
+</script>
+
+<script>
+
+    const modelViewerColor = document.querySelector("model-viewer#color");
+
     document.querySelector('#color-controls').addEventListener('click', (event) => {
     const colorString = event.target.dataset.color;
 
@@ -100,6 +193,32 @@
     const [material] = modelViewerColor.model.materials;
     material.pbrMetallicRoughness.setBaseColorFactor(color);
     });
+
+    const modelViewerParameters = document.querySelector("model-viewer#color");
+
+    modelViewerParameters.addEventListener("load", (ev) => {
+
+    let material = modelViewerParameters.model.materials[0];
+
+    let metalnessDisplay = document.querySelector("#metalness-value");
+    let roughnessDisplay = document.querySelector("#roughness-value");
+
+    metalnessDisplay.textContent = material.pbrMetallicRoughness.metallicFactor;
+    roughnessDisplay.textContent = material.pbrMetallicRoughness.roughnessFactor;
+
+    // Defaults to gold
+    material.pbrMetallicRoughness.setBaseColorFactor([0.7294, 0.5333, 0.0392]);
+
+    document.querySelector('#metalness').addEventListener('input', (event) => {
+        material.pbrMetallicRoughness.setMetallicFactor(event.target.value);
+        metalnessDisplay.textContent = event.target.value;
+    });
+
+    document.querySelector('#roughness').addEventListener('input', (event) => {
+        material.pbrMetallicRoughness.setRoughnessFactor(event.target.value);
+        roughnessDisplay.textContent = event.target.value;
+    });
+    })
 </script>
 
 <style>
