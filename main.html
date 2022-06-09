@@ -54,10 +54,25 @@
 </model-viewer>
 
 <script type="module">
+    const modelViewerTexture = document.querySelector("model-viewer");
+
+    modelViewerTexture.addEventListener("scene-graph-ready", (ev) => {
+
+        let material = modelViewerTexture.model.materials[0];
+
+        document.querySelector('#diffuse').addEventListener('input', (event) => {
+        material.pbrMetallicRoughness.baseColorTexture.texture.source.setURI(event.target.value);
+    });
+
+    document.querySelector("#controls").addEventListener('beforexrselect', (ev) => {
+        ev.preventDefault();
+    });
+    })
+    
     const modelViewer = document.querySelector("model-viewer");
   
     window.switchSrc = (element, name) => {
-      const base = "" + name;
+      const base = name;
       modelViewer.src = base + '.glb';
       modelViewer.poster = base + '.png';
       const slides = document.querySelectorAll(".slide");
@@ -69,18 +84,6 @@
       // Keep slider interactions from affecting the XR scene.
       ev.preventDefault();
     });
-    
-
-    document.querySelector('#diffuse').addEventListener('input', (event) => {
-        material.pbrMetallicRoughness.baseColorTexture.texture.source.setURI(event.target.value);
-    });
-
-    document.querySelector("#controls").addEventListener('beforexrselect', (ev) => {
-        ev.preventDefault();
-    });
-    
-
-    const modelViewerColor = document.querySelector("model-viewer#color");
 
     document.querySelector('#color-controls').addEventListener('click', (event) => {
     const colorString = event.target.dataset.color;
