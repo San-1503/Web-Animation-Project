@@ -1,7 +1,7 @@
 <script type="module" src="https://unpkg.com/@google/model-viewer"></script>
 <script src="https://unpkg.com/focus-visible/dist/focus-visible.js" defer></script>
 
-<model-viewer src="./models/Range Rover.glb" poster="./download.png" shadow-intensity="10" ar ar-modes="webxr scene-viewer quick-look" ar camera-orbit="33deg 67deg auto" camera-controls alt="A 3D model of a Range Rover">
+<model-viewer src="./models/Range Rover.glb" poster="./pngs/Range Rover.png" shadow-intensity="10" ar ar-modes="webxr scene-viewer quick-look" ar camera-orbit="33deg 67deg auto" camera-controls alt="A 3D model of a Range Rover">
 </model-viewer>
     <button slot="ar-button" class="ar-button">View in your space</button>
     <div id="ar-prompt">
@@ -12,26 +12,29 @@
     </button>
     <div class="slider">
         <div class="slides">
-            <button class="slide selected" onclick="switchSrc(this, 'Range Rover')" style="background-image: url('./models/Range\ Rover.glb');">
+            <button class="slide selected" onclick="switchSrc(this, 'Range Rover')" style="background-image: url('./pngs/Range\ Rover.png');">
     
-            </button><button class="slide" onclick="switchSrc(this, '80s Car')" style="background-image: url('./models/80s\ Car.glb');">
-    
-            </button><button class="slide" onclick="switchSrc(this, 'Convertible')" style="background-image: url('./models/Convertible.glb');">
+            </button><button class="slide" onclick="switchSrc(this, 'Convertible')" style="background-image: url('./pngs/Convertible.png');">
           
-            </button><button class="slide" onclick="switchSrc(this, 'Mitsubishi L200')" style="background-image: url('./models/Mitsubishi\ L200.glb');">
+            </button><button class="slide" onclick="switchSrc(this, 'Mitsubishi L200')" style="background-image: url('./pngs/Mitsubishi\ L200.png');">
           
-            </button><button class="slide" onclick="switchSrc(this, 'Old Car')" style="background-image: url('./models/Old\ Car.glb');"> 
+            </button><button class="slide" onclick="switchSrc(this, 'Old Car')" style="background-image: url('./pngs/Old\ Car.png');"> 
             
-            </button><button class="slide" onclick="switchSrc(this, 'Retro Car')" style="background-image: url('./models/Retro\ car.glb');"> 
+            </button><button class="slide" onclick="switchSrc(this, 'Retro Car')" style="background-image: url('./pngs/Retro\ car.png');"> 
 
-            </button><button class="slide" onclick="switchSrc(this, 'Rolls Royce')" style="background-image: url('./models/Rolls\ Royce.glb');"> 
+            </button><button class="slide" onclick="switchSrc(this, 'Rolls Royce')" style="background-image: url('./pngs/Rolls\ Royce.png');"> 
 
-            </button><button class="slide" onclick="switchSrc(this, 'Sports Car')" style="background-image: url('./models/Sports\ Car.glb');"> 
+            </button><button class="slide" onclick="switchSrc(this, 'Sports Car')" style="background-image: url('./pngs/Sports\ Car.png');"> 
 
-            </button><button class="slide" onclick="switchSrc(this, 'Toyota AE86')" style="background-image: url('./models/Toyota\ AE86.glb');"> 
+            </button><button class="slide" onclick="switchSrc(this, 'Toyota AE86')" style="background-image: url('./pngs/Toyota\ AE86.png');"> 
 
-            </button><button class="slide" onclick="switchSrc(this, 'Wizardus Maximus')" style="background-image: url('./models/Wizardus\ Maximus.glb');"> 
-        </button></div>
+            </button><button class="slide" onclick="switchSrc(this, 'CAR Model')" style="background-image: url('./pngs/CAR\ Model.png');"> 
+
+            </button><button class="slide" onclick="switchSrc(this, 'Car')" style="background-image: url('./pngs/Car.png');">    
+                
+            </button><button class="slide" onclick="switchSrc(this, 'Dominus Body v2')" style="background-image: url('./pngs/Dominus\ Body\ v2.png');"> 
+
+            </button></div>
       </div>
     
     <div id="controls">
@@ -72,7 +75,7 @@
     const modelViewer = document.querySelector("model-viewer");
   
     window.switchSrc = (element, name) => {
-      const base = name;
+      const base = "./models/"+ name;
       modelViewer.src = base + '.glb';
       modelViewer.poster = base + '.png';
       const slides = document.querySelectorAll(".slide");
