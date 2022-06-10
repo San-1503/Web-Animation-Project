@@ -20,8 +20,8 @@ function init() {
   scene = new THREE.Scene();
 
   new RGBELoader()
-    .setPath( './' )
-    .load( 'spruit_sunrise_1k_HDR.hdr', function ( texture ) {
+    .setPath( 'textures/' )
+    .load( 'venice_sunset_1k.hdr', function ( texture ) {
 
       texture.mapping = THREE.EquirectangularReflectionMapping;
 
@@ -33,7 +33,7 @@ function init() {
       // model
 
       const loader = new GLTFLoader().setPath( 'models/' );
-      loader.load( 'Range Rover.glb', function ( gltf ) {
+      loader.load( 'Fall Tree V1.glb', function ( gltf ) {
 
         scene.add( gltf.scene );
         console.log(gltf.scene);
